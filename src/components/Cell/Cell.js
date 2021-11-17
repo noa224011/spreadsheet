@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import CellContext from "../../store/cell-context";
 import "./Cell.css";
 
 function Cell(props) {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [cellValue, setCellValue] = useState("Noa Shay is the queen");
   const inputRef = useRef(null);
 
   function cellClickHandler() {
@@ -19,17 +21,34 @@ function Cell(props) {
     }
   }
 
+  function updateCellValueHandler(event) {
+    setCellValue(event.target.value);
+  }
+
   useEffect(() => {
     document.addEventListener("click", onClickOutsideInputHandler);
   });
 
+  const cellContext = {
+    cellValue,
+  };
+
+  // <CellContext.Provider value={cellContext}>
   return isEditMode ? (
-    <input ref={inputRef} data-cell-id={"2"}></input>
+    <input
+      ref={inputRef}
+      data-cell-id={"2"}
+      value={cellValue}
+      onChange={updateCellValueHandler}
+    ></input>
   ) : (
     <div data-cell-id={"2"} onClick={cellClickHandler}>
-      {props.children}
+      {cellValue}
     </div>
   );
+  {
+    /* </CellContext.Provider> */
+  }
 }
 
 export default Cell;

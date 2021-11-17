@@ -3,7 +3,7 @@ import Cell from "./components/Cell/Cell";
 import Table from "./components/Table/Table";
 
 function App() {
-  return <Cell>Hello</Cell>;
+  return <Cell></Cell>;
 }
 
 export default App;
