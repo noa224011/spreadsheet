@@ -1,9 +1,8 @@
 import "./App.css";
-import Cell from "./components/Cell/Cell";
-import Table from "./components/Table/Table";
+import Container from "./components/Container/Container";
 
 function App() {
-  return <Cell></Cell>;
+  return <Container></Container>;
 }
 
 export default App;
