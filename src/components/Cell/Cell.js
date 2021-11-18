@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import CellContext from "../../store/cell-context";
 import "./Cell.css";
 
+export const CELL_WIDTH = 100;
+export const CELL_HEIGHT = 25;
+
 function Cell(props) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [cellValue, setCellValue] = useState("Noa Shay is the queen");
