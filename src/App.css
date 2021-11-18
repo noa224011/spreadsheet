@@ -1,3 +1,4 @@
-div {
-  width: max-content;
+html,
+body {
+  font-size: 16px;
 }

@@ -7,19 +7,22 @@ export const CELL_HEIGHT = 25;
 
 function Cell(props) {
   const [isEditMode, setIsEditMode] = useState(false);
-  const [cellValue, setCellValue] = useState("Noa Shay is the queen");
+  const [cellValue, setCellValue] = useState("cell");
   const inputRef = useRef(null);
 
   function cellClickHandler() {
+    console.log("EDIT MODE ON");
     setIsEditMode(true);
   }
 
   function changeCellToLabel() {
+    console.log("EDIT MODE OFF");
     setIsEditMode(false);
   }
 
   function onClickOutsideInputHandler(event) {
-    if (event.target?.dataset?.cellId !== "2") {
+    if (event.target.dataset.cellId !== props.cellId) {
+      console.log(props.cellId);
       changeCellToLabel();
     }
   }
@@ -30,28 +33,35 @@ function Cell(props) {
 
   useEffect(() => {
     document.addEventListener("click", onClickOutsideInputHandler);
+
+    return document.addEventListener("click", onClickOutsideInputHandler);
   });
 
   const cellContext = {
     cellValue,
   };
 
-  // <CellContext.Provider value={cellContext}>
   return isEditMode ? (
-    <input
-      ref={inputRef}
-      data-cell-id={"2"}
-      value={cellValue}
-      onChange={updateCellValueHandler}
-    ></input>
+    <CellContext.Provider value={cellContext}>
+      <input
+        className={"cell-input"}
+        ref={inputRef}
+        data-cell-id={props.cellId}
+        value={cellValue}
+        onChange={updateCellValueHandler}
+      ></input>
+    </CellContext.Provider>
   ) : (
-    <div data-cell-id={"2"} onClick={cellClickHandler}>
-      {cellValue}
-    </div>
+    <CellContext.Provider value={cellContext}>
+      <div
+        className={"cell-label"}
+        data-cell-id={props.cellId}
+        onClick={cellClickHandler}
+      >
+        {cellValue}
+      </div>
+    </CellContext.Provider>
   );
-  {
-    /* </CellContext.Provider> */
-  }
 }
 
 export default Cell;

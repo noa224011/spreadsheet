@@ -1,5 +1,7 @@
+import "./Column.css";
+
 function Column(props) {
-  return <td>{props.children}</td>;
+  return <td className={"column"}>{props.children}</td>;
 }
 
 export default Column;
