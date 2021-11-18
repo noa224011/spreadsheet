@@ -8,34 +8,37 @@ export const CELL_HEIGHT = 25;
 function Cell(props) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [cellValue, setCellValue] = useState("cell");
-  const inputRef = useRef(null);
+  const inputRef = useRef();
 
   function cellClickHandler() {
     console.log("EDIT MODE ON");
+    console.log(`cellId: ${props.cellId}`);
+    console.log("ref:", inputRef.current?.value);
     setIsEditMode(true);
   }
 
-  function changeCellToLabel() {
-    console.log("EDIT MODE OFF");
-    setIsEditMode(false);
-  }
+  // function changeCellToLabel() {
+  //   console.log("EDIT MODE OFF");
+  //   setIsEditMode(false);
+  // }
 
-  function onClickOutsideInputHandler(event) {
-    if (event.target.dataset.cellId !== props.cellId) {
-      console.log(props.cellId);
-      changeCellToLabel();
-    }
-  }
+  // function onClickOutsideInputHandler(event) {
+  //   if (event.target.dataset.cellId !== props.cellId) {
+  //     changeCellToLabel();
+  //   }
+  // }
 
   function updateCellValueHandler(event) {
     setCellValue(event.target.value);
   }
 
-  useEffect(() => {
-    document.addEventListener("click", onClickOutsideInputHandler);
+  // useEffect(() => {
+  //   document.addEventListener("click", onClickOutsideInputHandler);
 
-    return document.addEventListener("click", onClickOutsideInputHandler);
-  });
+  //   return () => {
+  //     document.addEventListener("click", onClickOutsideInputHandler);
+  //   };
+  // });
 
   const cellContext = {
     cellValue,
