@@ -66,13 +66,12 @@ function Cell(props) {
   function onEnterClickCellHandler(event) {
     if (event.key === "Enter") {
       setIsEditMode(false);
-    }
-
-    if (cellValue) {
-      setTimeout(() => {
-        const outcome = calculate(cellValue);
-        setCellValue(outcome);
-      }, 1000);
+      if (cellValue) {
+        setTimeout(() => {
+          const outcome = calculate(cellValue);
+          setCellValue(outcome);
+        }, 1000);
+      }
     }
   }
 
