@@ -16,16 +16,22 @@ function Cell(props) {
     setIsEditMode(true);
   }
 
-  // function changeCellToLabel() {
-  //   console.log("EDIT MODE OFF");
-  //   setIsEditMode(false);
-  // }
+  function changeCellToLabel() {
+    console.log("EDIT MODE OFF");
+    setIsEditMode(false);
+  }
 
-  // function onClickOutsideInputHandler(event) {
-  //   if (event.target.dataset.cellId !== props.cellId) {
-  //     changeCellToLabel();
-  //   }
-  // }
+  function onClickOutsideInputHandler(event) {
+    if (event.target.dataset.cellId !== props.cellId) {
+      if (cellValue) {
+        console.log("is this happening?");
+        const outcome = calculate(cellValue);
+        setCellValue(outcome);
+        return;
+      }
+      changeCellToLabel();
+    }
+  }
 
   function updateCellValueHandler(event) {
     setCellValue(event.target.value);
@@ -42,24 +48,32 @@ function Cell(props) {
       } catch {
         return value;
       }
+    } else {
+      return value;
     }
   }
 
-  function handleClickOutsideCell(event) {
-    if (inputRef.current && !inputRef.current.contains(event.target)) {
-      console.log("input ref:", inputRef.current);
-      console.log("event target:", event.target);
-      console.log("You clicked outside of me!");
-      console.log("cell value:", cellValue);
+  // function handleClickOutsideCell(event) {
+  //   if (inputRef.current && !inputRef.current.contains(event.target)) {
+  //     console.log("input ref:", inputRef.current);
+  //     console.log("event target:", event.target);
+  //     console.log("You clicked outside of me!");
+  //     console.log("cell value:", cellValue);
 
-      // TODO: Add calculation here
-    }
-  }
+  //     // TODO: Add calculation here
+  //     if (cellValue) {
+  //       console.log("is this happening?");
+  //       const outcome = calculate(cellValue);
+  //       setCellValue(outcome);
+  //       return;
+  //     }
+  //   }
+  // }
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutsideCell);
+    document.addEventListener("click", onClickOutsideInputHandler);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutsideCell);
+      document.removeEventListener("click", onClickOutsideInputHandler);
     };
   }, [inputRef]);
 
@@ -67,7 +81,7 @@ function Cell(props) {
     if (event.key === "Enter") {
       setIsEditMode(false);
       if (cellValue) {
-        const outcome = calculate(cellValue);
+        const outcome = Math.round(calculate(cellValue));
         setCellValue(outcome);
       }
     }
@@ -77,10 +91,12 @@ function Cell(props) {
   //   cellValue,
   // };
 
+  const inputClassName = isEditMode ? "cell-input cell-selected" : "cell-input";
+
   return isEditMode ? (
     // <CellContext.Provider value={cellContext}>
     <input
-      className={isEditMode ? "cell-input cell-selected" : "cell-input"}
+      className={inputClassName}
       ref={inputRef}
       data-cell-id={props.cellId}
       value={cellValue}
