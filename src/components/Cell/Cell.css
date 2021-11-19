@@ -16,3 +16,8 @@
   text-overflow: clip;
   white-space: nowrap;
 }
+
+.cell-selected {
+  outline-color: "lightblue";
+  outline-style: "dotted";
+}
