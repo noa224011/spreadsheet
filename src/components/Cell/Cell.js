@@ -1,118 +1,71 @@
-import { useEffect, useRef, useState } from "react";
-import CellContext from "../../store/cell-context";
-import "./Cell.css";
+import React, { useRef, useState, useImperativeHandle } from "react";
 import { evaluate } from "mathjs";
+import "./Cell.css";
+import CellContext from "../../store/cell-context";
 
 export const CELL_WIDTH = 100;
 export const CELL_HEIGHT = 25;
 
-function Cell(props) {
-  const [isEditMode, setIsEditMode] = useState(false);
+const Cell = React.forwardRef((props, ref) => {
   const [cellValue, setCellValue] = useState("");
-  const inputRef = useRef();
+  const inputRef = useRef(null);
 
-  function cellClickHandler() {
-    console.log("EDIT MODE ON");
-    setIsEditMode(true);
+  // Set cell value state each time the user enters input
+  function onCellValueChange(event) {
+    setCellValue(event.target.value);
   }
 
-  function changeCellToLabel() {
-    console.log("EDIT MODE OFF");
-    setIsEditMode(false);
-  }
-
-  function onClickOutsideInputHandler(event) {
-    if (event.target.dataset.cellId !== props.cellId) {
-      if (cellValue) {
-        console.log("is this happening?");
-        const outcome = calculate(cellValue);
-        setCellValue(outcome);
-        return;
-      }
-      changeCellToLabel();
+  // When clicking on another cell, calculate the result in currect cell
+  function onBlur() {
+    if (cellValue) {
+      const outcome = calculate(cellValue);
+      setCellValue(outcome);
     }
   }
 
-  function updateCellValueHandler(event) {
-    setCellValue(event.target.value);
-    console.log(`cellId: ${props.cellId}`);
-    console.log("ref:", inputRef.current?.value);
-    console.log("cellValue", cellValue);
-  }
-
+  // Calculate value each time it starts with '='
   function calculate(value) {
-    if (value.startsWith("=")) {
+    if (value && value.startsWith("=")) {
       const value = cellValue.slice(1);
       try {
-        return evaluate(value);
-      } catch {
-        return value;
-      }
-    } else {
-      return value;
+        return Math.round(evaluate(value));
+      } catch {}
     }
+    return value;
   }
 
-  // function handleClickOutsideCell(event) {
-  //   if (inputRef.current && !inputRef.current.contains(event.target)) {
-  //     console.log("input ref:", inputRef.current);
-  //     console.log("event target:", event.target);
-  //     console.log("You clicked outside of me!");
-  //     console.log("cell value:", cellValue);
-
-  //     // TODO: Add calculation here
-  //     if (cellValue) {
-  //       console.log("is this happening?");
-  //       const outcome = calculate(cellValue);
-  //       setCellValue(outcome);
-  //       return;
-  //     }
-  //   }
-  // }
-
-  useEffect(() => {
-    document.addEventListener("click", onClickOutsideInputHandler);
-    return () => {
-      document.removeEventListener("click", onClickOutsideInputHandler);
-    };
-  }, [inputRef]);
-
+  // When pressing Enter, calculate the result in currect cell
   function onEnterClickCellHandler(event) {
     if (event.key === "Enter") {
-      setIsEditMode(false);
-      if (cellValue) {
-        const outcome = Math.round(calculate(cellValue));
-        setCellValue(outcome);
-      }
+      inputRef.current.blur();
+      props.onEnterPressed(props.cellId);
+      props.getCellIdsValues(cellValue);
     }
   }
 
-  // const cellContext = {
-  //   cellValue,
-  // };
-
-  const inputClassName = isEditMode ? "cell-input cell-selected" : "cell-input";
-
-  return isEditMode ? (
-    // <CellContext.Provider value={cellContext}>
-    <input
-      className={inputClassName}
-      ref={inputRef}
-      data-cell-id={props.cellId}
-      value={cellValue}
-      onChange={updateCellValueHandler}
-      onKeyDown={onEnterClickCellHandler}
-    ></input>
-  ) : (
-    // <CellContext.Provider value={cellContext}>
-    <div
-      className={"cell-label"}
-      data-cell-id={props.cellId}
-      onClick={cellClickHandler}
-    >
-      {cellValue}
-    </div>
+  useImperativeHandle(
+    ref,
+    () => ({
+      focus: () => {
+        inputRef.current.focus();
+      },
+      cellValue: cellValue,
+    }),
+    [cellValue]
   );
-}
+
+  return (
+    <CellContext.Provider value={{ cellValue: cellValue }}>
+      <input
+        className={"cell-input cell-selected"}
+        ref={inputRef}
+        value={cellValue}
+        onChange={onCellValueChange}
+        onBlur={onBlur}
+        onKeyDown={onEnterClickCellHandler}
+      ></input>
+    </CellContext.Provider>
+  );
+});
 
 export default Cell;

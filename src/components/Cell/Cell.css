@@ -5,17 +5,7 @@
   padding: 0;
   margin: 0;
   border: 0;
-}
-
-.cell-label {
-  overflow: auto;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  line-height: 19px;
-  padding: 2px;
-  text-overflow: clip;
-  white-space: nowrap;
+  cursor: cell;
 }
 
 .cell-selected {
