@@ -5,9 +5,8 @@ import { CELL_HEIGHT, CELL_WIDTH } from "../Cell/Cell";
 import Cell from "../Cell/Cell";
 import { useEffect, useRef, useState } from "react";
 import { numberToLetters } from "../../utils/numbersToLetters";
-import { letterToNumber } from "../../utils/lettersToNumbers";
+import { letterToNumber } from "../../utils/lettersHelper";
 import "./Table.css";
-import MatrixContext from "../../store/matrix-context";
 
 function Table(props) {
   const [tableSize, setTableSize] = useState({ width: 1500, heigh: 500 });
@@ -45,7 +44,6 @@ function Table(props) {
       };
       cells.push(rowColumnFormat);
     });
-    console.log("CELLS:", cells);
     return cells;
   }
 
@@ -61,7 +59,6 @@ function Table(props) {
         values.push(getCellValue(+row, +column));
       }
     });
-    console.log("VALUES:", values);
     return values;
   }
 
@@ -75,41 +72,45 @@ function Table(props) {
     setIsInit(true);
   }, [isInit]);
 
+  useEffect(() => {
+    if (isInit) {
+      localStorage.setItem("matrix", JSON.stringify(cellsRefs));
+      console.log("local storage is updated");
+    }
+  }, [cellsRefs]);
+
   console.log(cellsRefs);
   return (
-    <MatrixContext.Provider value={{ matrix: cellsRefs }}>
-      <button onClick={() => console.log(cellsRefs.current[0][0].cellValue)} />
-      <table className={"table"}>
-        <tbody>
-          <Row>
-            {cellsRefs.current?.[0]?.map((column, columnIndex) => (
-              <SideCells key={columnIndex}>
-                {numberToLetters(columnIndex)}
-              </SideCells>
-            ))}
-            <SideCells>{numberToLetters(numberOfColumns)}</SideCells>
-          </Row>
-
-          {cellsRefs.current.map((row, rowIndex) => (
-            <Row key={rowIndex}>
-              <SideCells>{rowIndex + 1}</SideCells>
-              {row.map((column, columnIndex) => (
-                <Column key={columnIndex}>
-                  <Cell
-                    ref={(ref) => {
-                      cellsRefs.current[columnIndex][rowIndex] = ref;
-                    }}
-                    cellId={`${rowIndex},${columnIndex}`}
-                    onEnterPressed={focuseNextCell}
-                    getCellIdsValues={getCellIdsValues}
-                  />
-                </Column>
-              ))}
-            </Row>
+    <table className={"table"}>
+      <tbody>
+        <Row>
+          {cellsRefs.current?.[0]?.map((column, columnIndex) => (
+            <SideCells key={columnIndex}>
+              {numberToLetters(columnIndex)}
+            </SideCells>
           ))}
-        </tbody>
-      </table>
-    </MatrixContext.Provider>
+          <SideCells>{numberToLetters(numberOfColumns)}</SideCells>
+        </Row>
+
+        {cellsRefs.current.map((row, rowIndex) => (
+          <Row key={rowIndex}>
+            <SideCells>{rowIndex + 1}</SideCells>
+            {row.map((column, columnIndex) => (
+              <Column key={columnIndex}>
+                <Cell
+                  ref={(ref) => {
+                    cellsRefs.current[columnIndex][rowIndex] = ref;
+                  }}
+                  cellId={`${rowIndex},${columnIndex}`}
+                  onEnterPressed={focuseNextCell}
+                  getCellIdsValues={getCellIdsValues}
+                />
+              </Column>
+            ))}
+          </Row>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
