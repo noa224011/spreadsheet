@@ -4,8 +4,10 @@ import SideCells from "../SideCells/SideCells";
 import { CELL_HEIGHT, CELL_WIDTH } from "../Cell/Cell";
 import Cell from "../Cell/Cell";
 import { useEffect, useRef, useState } from "react";
-import { numberToLetters } from "../../utils/numbersToLetters";
-import { letterToNumber } from "../../utils/lettersHelper";
+import {
+  lettersIdToMatrixId,
+  numberToLetters,
+} from "../../utils/lettersHelpers";
 import "./Table.css";
 
 function Table(props) {
@@ -26,25 +28,6 @@ function Table(props) {
   // Get cell value at specified location in the matrix
   function getCellValue(row, column) {
     return cellsRefs?.current[row][column].cellValue;
-  }
-
-  // Gets a cell value (A5+B7 type of equation) and formats it to cell matrix location (0,1)
-  function lettersIdToMatrixId(cellValue) {
-    const cellIds = cellValue.split(/[+*-/]/);
-    const lettersToCellLocation = cellIds.map((cellId) =>
-      letterToNumber(cellId[0])
-    );
-    const cells = [];
-    cellIds.forEach((cellId, index) => {
-      const finalCellLocation =
-        lettersToCellLocation[index].toString() + cellId[1];
-      const rowColumnFormat = {
-        row: +finalCellLocation[0],
-        column: +finalCellLocation[1] - 1,
-      };
-      cells.push(rowColumnFormat);
-    });
-    return cells;
   }
 
   // Gets a cell value (A5+B7 type of equation), and returns each cell location value
@@ -72,14 +55,13 @@ function Table(props) {
     setIsInit(true);
   }, [isInit]);
 
-  useEffect(() => {
-    if (isInit) {
-      localStorage.setItem("matrix", JSON.stringify(cellsRefs));
-      console.log("local storage is updated");
-    }
-  }, [cellsRefs]);
+  // useEffect(() => {
+  //   if (isInit) {
+  //     localStorage.setItem("matrix", JSON.stringify(cellsRefs));
+  //     console.log("local storage is updated");
+  //   }
+  // }, [cellsRefs]);
 
-  console.log(cellsRefs);
   return (
     <table className={"table"}>
       <tbody>

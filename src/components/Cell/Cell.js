@@ -1,7 +1,7 @@
 import React, { useRef, useState, useImperativeHandle } from "react";
 import { evaluate } from "mathjs";
 import "./Cell.css";
-import { doesContainLetter } from "../../utils/lettersHelper";
+import { doesContainLetter } from "../../utils/lettersHelpers";
 
 export const CELL_WIDTH = 100;
 export const CELL_HEIGHT = 25;
