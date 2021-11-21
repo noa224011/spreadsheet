@@ -1,7 +1,7 @@
 import React, { useRef, useState, useImperativeHandle } from "react";
 import { evaluate } from "mathjs";
 import "./Cell.css";
-import CellContext from "../../store/cell-context";
+import { doesContainLetter } from "../../utils/lettersHelper";
 
 export const CELL_WIDTH = 100;
 export const CELL_HEIGHT = 25;
@@ -27,11 +27,36 @@ const Cell = React.forwardRef((props, ref) => {
   function calculate(value) {
     if (value && value.startsWith("=")) {
       const value = cellValue.slice(1);
+      let evalutedExpression;
+      if (doesContainLetter(value)) {
+        evalutedExpression = lettersEquationBuilder(value);
+      } else {
+        evalutedExpression = value;
+      }
       try {
-        return Math.round(evaluate(value));
-      } catch {}
+        return Math.round(evaluate(evalutedExpression));
+      } catch {
+        return value;
+      }
     }
     return value;
+  }
+
+  // Gets a cell value, and returns the cell equation translation
+  function lettersEquationBuilder(cellValue) {
+    const values = props.getCellIdsValues(cellValue);
+    const operations = cellValue
+      .split(/[A-Z0-9]/)
+      .filter((operation) => operation !== "");
+    let equation = "";
+    for (let i = 0; i < values.length; i++) {
+      if (typeof operations[i] === "undefined") {
+        equation += `${values[i]}`;
+      } else {
+        equation += `${values[i]} ${operations[i]} `;
+      }
+    }
+    return equation;
   }
 
   // When pressing Enter, calculate the result in currect cell
@@ -39,7 +64,6 @@ const Cell = React.forwardRef((props, ref) => {
     if (event.key === "Enter") {
       inputRef.current.blur();
       props.onEnterPressed(props.cellId);
-      props.getCellIdsValues(cellValue);
     }
   }
 
@@ -55,16 +79,14 @@ const Cell = React.forwardRef((props, ref) => {
   );
 
   return (
-    <CellContext.Provider value={{ cellValue: cellValue }}>
-      <input
-        className={"cell-input cell-selected"}
-        ref={inputRef}
-        value={cellValue}
-        onChange={onCellValueChange}
-        onBlur={onBlur}
-        onKeyDown={onEnterClickCellHandler}
-      ></input>
-    </CellContext.Provider>
+    <input
+      className={"cell-input cell-selected"}
+      ref={inputRef}
+      value={cellValue}
+      onChange={onCellValueChange}
+      onBlur={onBlur}
+      onKeyDown={onEnterClickCellHandler}
+    ></input>
   );
 });
 
