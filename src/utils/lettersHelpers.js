@@ -6,6 +6,9 @@ export function letterToNumber(letter) {
   return alphabet.indexOf(upperLetter);
 }
 
+export const doesContainLetter = (value) =>
+  alphabet.some((letter) => value.includes(letter));
+
 export function numberToLetters(num) {
   let s = "",
     t;
@@ -17,9 +20,6 @@ export function numberToLetters(num) {
   }
   return s || undefined;
 }
-
-export const doesContainLetter = (value) =>
-  alphabet.some((letter) => value.includes(letter));
 
 // Gets a cell value (A5+B7 type of equation) and formats it to cell matrix location (0,1)
 export function lettersIdToMatrixId(cellValue) {

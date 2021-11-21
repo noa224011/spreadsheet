@@ -18,12 +18,12 @@ function Table(props) {
   const numberOfColumns = tableSize.width / CELL_WIDTH;
   const numberOfRows = tableSize.heigh / CELL_HEIGHT;
 
-  function focuseNextCell(cellId) {
-    const [row, column] = cellId.split(",").map((el) => +el);
-    // TODO: the order is not correct!
-    console.log("row, column:", row, column);
-    cellsRefs.current[row + 1][column].focus();
-  }
+  // function focuseNextCell(cellId) {
+  //   const [row, column] = cellId.split(",").map((el) => +el);
+  //   // TODO: the order is not correct!
+  //   console.log("row, column:", row, column);
+  //   cellsRefs.current[row + 1][column].focus();
+  // }
 
   // Get cell value at specified location in the matrix
   function getCellValue(row, column) {
@@ -84,7 +84,6 @@ function Table(props) {
                     cellsRefs.current[columnIndex][rowIndex] = ref;
                   }}
                   cellId={`${rowIndex},${columnIndex}`}
-                  onEnterPressed={focuseNextCell}
                   getCellIdsValues={getCellIdsValues}
                 />
               </Column>

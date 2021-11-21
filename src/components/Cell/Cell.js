@@ -63,10 +63,10 @@ const Cell = React.forwardRef((props, ref) => {
   function onEnterClickCellHandler(event) {
     if (event.key === "Enter") {
       inputRef.current.blur();
-      props.onEnterPressed(props.cellId);
     }
   }
 
+  // Upgrade ref content of this component
   useImperativeHandle(
     ref,
     () => ({
